@@ -3,320 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>\ud83c\udfac \ud55c\uad6d\uc601\ud654 \ud034\uc988</title>
+<title>🎬 최신 영화 퀴즈</title>
 <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0a0f;
-  --surface: #13131c;
-  --card: #1c1c2e;
-  --accent: #ff3c5f;
-  --accent2: #ffcc00;
-  --accent3: #00e5ff;
-  --text: #f0f0f8;
-  --muted: #7070a0;
-  --correct: #00c97a;
-  --wrong: #ff3c5f;
-  --border: rgba(255,255,255,0.08);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Noto Sans KR', sans-serif;
-  min-height: 100vh;
-}
-
-/* \u2500\u2500 SCREENS \u2500\u2500 */
-.screen { display: none; }
-.screen.active { display: block; }
-
-.container {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 20px 80px;
-}
-
-/* \u2500\u2500 HEADER \u2500\u2500 */
-.header {
-  text-align: center;
-  padding: 44px 0 36px;
-}
-.header .strip { font-size: 1.8rem; letter-spacing: 6px; margin-bottom: 14px; }
-.header h1 {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(2.2rem, 7vw, 3.6rem);
-  background: linear-gradient(135deg, #ffcc00, #ff3c5f, #00e5ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.1;
-  margin-bottom: 8px;
-}
-.header p { color: var(--muted); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
-
-/* \u2500\u2500 SECTION LABEL \u2500\u2500 */
-.sec-label {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 1rem;
-  color: var(--accent3);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
-}
-
-/* \u2500\u2500 MOVIE GRID \u2500\u2500 */
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 28px;
-}
-.movie-card {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  user-select: none;
-}
-.movie-card:hover { border-color: rgba(255,204,0,0.4); transform: translateY(-2px); }
-.movie-card.selected {
-  border-color: var(--accent2);
-  background: rgba(255,204,0,0.07);
-  box-shadow: 0 0 18px rgba(255,204,0,0.15);
-}
-.movie-card .chk {
-  position: absolute; top: 10px; right: 10px;
-  width: 22px; height: 22px;
-  background: var(--accent2); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: bold; color: #000;
-  opacity: 0; transform: scale(0);
-  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
-}
-.movie-card.selected .chk { opacity: 1; transform: scale(1); }
-.movie-card .m-emoji { font-size: 1.8rem; margin-bottom: 8px; }
-.movie-card .m-title {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 0.95rem; color: var(--text); margin-bottom: 3px;
-}
-.movie-card .m-year { font-size: 0.72rem; color: var(--muted); }
-.movie-card .m-genre {
-  display: inline-block; margin-top: 7px;
-  padding: 2px 8px; border-radius: 20px;
-  background: rgba(255,255,255,0.05);
-  font-size: 0.68rem; color: var(--muted);
-}
-
-/* \u2500\u2500 BOTTOM BAR \u2500\u2500 */
-.bottom-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 22px;
-  margin-top: 8px;
-}
-.sel-info { color: var(--muted); font-size: 0.9rem; }
-.sel-info b { color: var(--accent2); font-size: 1.15rem; font-family: 'Black Han Sans', sans-serif; }
-.btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
-
-/* \u2500\u2500 BUTTONS \u2500\u2500 */
-.btn {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 0.95rem;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-.btn-primary {
-  background: linear-gradient(135deg, #ff3c5f, #ff6b35);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(255,60,95,0.3);
-}
-.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,60,95,0.45); }
-.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-.btn-ghost {
-  background: transparent; color: var(--muted);
-  border: 1.5px solid var(--border);
-}
-.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
-
-/* \u2500\u2500 QUIZ HEADER \u2500\u2500 */
-.quiz-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 0 16px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
-  flex-wrap: wrap; gap: 12px;
-}
-.movie-badge { display: flex; align-items: center; gap: 10px; }
-.badge-emoji { font-size: 1.4rem; }
-.badge-title { font-family: 'Black Han Sans', sans-serif; font-size: 1rem; color: var(--accent2); }
-
-.q-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.q-prog-text { font-size: 0.78rem; color: var(--muted); }
-.prog-bar { width: 150px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s ease; }
-.score-txt { font-size: 0.78rem; color: var(--muted); }
-.score-txt span { color: var(--correct); font-family: 'Black Han Sans', sans-serif; font-size: 1rem; }
-
-/* \u2500\u2500 QUESTION \u2500\u2500 */
-.q-cat {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 14px; border-radius: 20px;
-  font-size: 0.73rem; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  margin-bottom: 14px;
-}
-.cat-c { background: rgba(255,204,0,0.14); color: var(--accent2); border: 1px solid rgba(255,204,0,0.3); }
-.cat-p { background: rgba(0,229,255,0.1); color: var(--accent3); border: 1px solid rgba(0,229,255,0.25); }
-.cat-q { background: rgba(255,60,95,0.1); color: var(--accent); border: 1px solid rgba(255,60,95,0.25); }
-.cat-s { background: rgba(160,110,255,0.1); color: #b08bff; border: 1px solid rgba(160,110,255,0.25); }
-
-.q-text {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(1.2rem, 3.5vw, 1.65rem);
-  line-height: 1.45;
-  margin-bottom: 26px;
-}
-
-/* \u2500\u2500 OPTIONS \u2500\u2500 */
-.opts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-@media (max-width: 480px) { .opts-grid { grid-template-columns: 1fr; } }
-
-.opt-btn {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  text-align: left;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 12px;
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 0.92rem;
-  color: var(--text);
-  transition: all 0.18s ease;
-  line-height: 1.4;
-}
-.opt-btn:hover:not(:disabled) { border-color: rgba(255,204,0,0.4); background: rgba(255,204,0,0.04); transform: translateX(4px); }
-.opt-lbl {
-  width: 28px; height: 28px; min-width: 28px;
-  border-radius: 7px;
-  background: rgba(255,255,255,0.06);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 0.82rem;
-  transition: all 0.2s;
-}
-.opt-btn.correct { border-color: var(--correct); background: rgba(0,201,122,0.1); }
-.opt-btn.correct .opt-lbl { background: var(--correct); color: #000; }
-.opt-btn.wrong { border-color: var(--wrong); background: rgba(255,60,95,0.08); }
-.opt-btn.wrong .opt-lbl { background: var(--wrong); color: #fff; }
-.opt-btn.dim { opacity: 0.38; }
-.opt-btn:disabled { cursor: default; }
-
-/* \u2500\u2500 FEEDBACK \u2500\u2500 */
-.feedback {
-  background: var(--surface);
-  border-left: 3px solid var(--correct);
-  border-radius: 12px;
-  padding: 16px 18px;
-  display: none;
-  animation: fadeUp 0.28s ease;
-}
-.feedback.show { display: block; }
-.feedback.fail-fb { border-left-color: var(--wrong); }
-.fb-result { font-family: 'Black Han Sans', sans-serif; font-size: 1.05rem; margin-bottom: 6px; }
-.fb-result.ok { color: var(--correct); }
-.fb-result.fail { color: var(--wrong); }
-.fb-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
-.fb-next { text-align: right; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* \u2500\u2500 RESULT \u2500\u2500 */
-.result-hero { text-align: center; padding: 48px 0 36px; }
-.r-emoji { font-size: 3.8rem; margin-bottom: 14px; }
-.r-grade {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(1.8rem, 6vw, 3rem);
-  background: linear-gradient(135deg, var(--accent2), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 10px;
-}
-.r-score-line { font-size: 1rem; color: var(--muted); }
-.r-score-line span { font-family: 'Black Han Sans', sans-serif; font-size: 1.8rem; color: var(--text); }
-
-.movie-results { display: grid; gap: 10px; margin: 28px 0; }
-.mr-row {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.mr-left { display: flex; align-items: center; gap: 10px; }
-.mr-em { font-size: 1.3rem; }
-.mr-ttl { font-family: 'Black Han Sans', sans-serif; font-size: 0.95rem; }
-.mr-right { display: flex; align-items: center; gap: 10px; }
-.mr-bar-wrap { width: 90px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.mr-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
-.mr-bar.hi { background: var(--correct); }
-.mr-bar.md { background: var(--accent2); }
-.mr-bar.lo { background: var(--wrong); }
-.mr-num { font-family: 'Black Han Sans', sans-serif; font-size: 0.88rem; min-width: 38px; text-align: right; }
-
-.result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+:root{--bg:#0a0a0f;--surface:#13131c;--card:#1c1c2e;--accent:#ff3c5f;--accent2:#ffcc00;--accent3:#00e5ff;--text:#f0f0f8;--muted:#7070a0;--correct:#00c97a;--wrong:#ff3c5f;--border:rgba(255,255,255,0.08);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;}
+.screen{display:none;}.screen.active{display:block;}
+.container{max-width:860px;margin:0 auto;padding:0 20px 80px;}
+.header{text-align:center;padding:44px 0 36px;}
+.header .strip{font-size:1.8rem;letter-spacing:6px;margin-bottom:14px;}
+.header h1{font-family:'Black Han Sans',sans-serif;font-size:clamp(2.2rem,7vw,3.6rem);background:linear-gradient(135deg,#ffcc00,#ff3c5f,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:8px;}
+.header p{color:var(--muted);font-size:.9rem;letter-spacing:2px;text-transform:uppercase;}
+.sec-label{font-family:'Black Han Sans',sans-serif;font-size:1rem;color:var(--accent3);letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.movie-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;margin-bottom:28px;}
+.movie-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:16px 14px;cursor:pointer;transition:all .2s ease;position:relative;user-select:none;}
+.movie-card:hover{border-color:rgba(255,204,0,.4);transform:translateY(-2px);}
+.movie-card.selected{border-color:var(--accent2);background:rgba(255,204,0,.07);box-shadow:0 0 18px rgba(255,204,0,.15);}
+.movie-card .chk{position:absolute;top:10px;right:10px;width:22px;height:22px;background:var(--accent2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;color:#000;opacity:0;transform:scale(0);transition:all .2s cubic-bezier(.34,1.56,.64,1);}
+.movie-card.selected .chk{opacity:1;transform:scale(1);}
+.m-emoji{font-size:1.8rem;margin-bottom:8px;}
+.m-title{font-family:'Black Han Sans',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:3px;}
+.m-year{font-size:.72rem;color:var(--muted);}
+.m-genre{display:inline-block;margin-top:7px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.05);font-size:.68rem;color:var(--muted);}
+.bottom-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px 22px;margin-top:8px;}
+.sel-info{color:var(--muted);font-size:.9rem;}
+.sel-info b{color:var(--accent2);font-size:1.15rem;font-family:'Black Han Sans',sans-serif;}
+.btn-group{display:flex;gap:10px;flex-wrap:wrap;}
+.btn{font-family:'Black Han Sans',sans-serif;font-size:.95rem;padding:12px 24px;border:none;border-radius:50px;cursor:pointer;transition:all .2s;}
+.btn-primary{background:linear-gradient(135deg,#ff3c5f,#ff6b35);color:#fff;box-shadow:0 4px 18px rgba(255,60,95,.3);}
+.btn-primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,60,95,.45);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,.3);}
+.quiz-top{display:flex;align-items:center;justify-content:space-between;padding:22px 0 16px;border-bottom:1px solid var(--border);margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.movie-badge{display:flex;align-items:center;gap:10px;}
+.badge-emoji{font-size:1.4rem;}
+.badge-title{font-family:'Black Han Sans',sans-serif;font-size:1rem;color:var(--accent2);}
+.q-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.q-prog-text{font-size:.78rem;color:var(--muted);}
+.prog-bar{width:150px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .4s ease;}
+.score-txt{font-size:.78rem;color:var(--muted);}
+.score-txt span{color:var(--correct);font-family:'Black Han Sans',sans-serif;font-size:1rem;}
+.q-cat{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:20px;font-size:.73rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;}
+.cat-c{background:rgba(255,204,0,.14);color:var(--accent2);border:1px solid rgba(255,204,0,.3);}
+.cat-p{background:rgba(0,229,255,.1);color:var(--accent3);border:1px solid rgba(0,229,255,.25);}
+.cat-q{background:rgba(255,60,95,.1);color:var(--accent);border:1px solid rgba(255,60,95,.25);}
+.cat-s{background:rgba(160,110,255,.1);color:#b08bff;border:1px solid rgba(160,110,255,.25);}
+.q-text{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.2rem,3.5vw,1.65rem);line-height:1.45;margin-bottom:26px;}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+@media(max-width:480px){.opts-grid{grid-template-columns:1fr;}}
+.opt-btn{background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;font-family:'Noto Sans KR',sans-serif;font-size:.92rem;color:var(--text);transition:all .18s ease;line-height:1.4;}
+.opt-btn:hover:not(:disabled){border-color:rgba(255,204,0,.4);background:rgba(255,204,0,.04);transform:translateX(4px);}
+.opt-lbl{width:28px;height:28px;min-width:28px;border-radius:7px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans',sans-serif;font-size:.82rem;transition:all .2s;}
+.opt-btn.correct{border-color:var(--correct);background:rgba(0,201,122,.1);}
+.opt-btn.correct .opt-lbl{background:var(--correct);color:#000;}
+.opt-btn.wrong{border-color:var(--wrong);background:rgba(255,60,95,.08);}
+.opt-btn.wrong .opt-lbl{background:var(--wrong);color:#fff;}
+.opt-btn.dim{opacity:.38;}
+.opt-btn:disabled{cursor:default;}
+.feedback{background:var(--surface);border-left:3px solid var(--correct);border-radius:12px;padding:16px 18px;display:none;}
+.feedback.show{display:block;}
+.feedback.fail-fb{border-left-color:var(--wrong);}
+.fb-result{font-family:'Black Han Sans',sans-serif;font-size:1.05rem;margin-bottom:6px;}
+.fb-result.ok{color:var(--correct);}
+.fb-result.fail{color:var(--wrong);}
+.fb-desc{font-size:.86rem;color:var(--muted);line-height:1.6;margin-bottom:14px;}
+.fb-next{text-align:right;}
+.result-hero{text-align:center;padding:48px 0 36px;}
+.r-emoji{font-size:3.8rem;margin-bottom:14px;}
+.r-grade{font-family:'Black Han Sans',sans-serif;font-size:clamp(1.8rem,6vw,3rem);background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;}
+.r-score-line{font-size:1rem;color:var(--muted);}
+.r-score-line span{font-family:'Black Han Sans',sans-serif;font-size:1.8rem;color:var(--text);}
+.movie-results{display:grid;gap:10px;margin:28px 0;}
+.mr-row{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.mr-left{display:flex;align-items:center;gap:10px;}
+.mr-em{font-size:1.3rem;}
+.mr-ttl{font-family:'Black Han Sans',sans-serif;font-size:.95rem;}
+.mr-right{display:flex;align-items:center;gap:10px;}
+.mr-bar-wrap{width:90px;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.mr-bar{height:100%;border-radius:3px;transition:width 1s ease;}
+.mr-bar.hi{background:var(--correct);}
+.mr-bar.md{background:var(--accent2);}
+.mr-bar.lo{background:var(--wrong);}
+.mr-num{font-family:'Black Han Sans',sans-serif;font-size:.88rem;min-width:38px;text-align:right;}
+.result-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
 </style>
 </head>
 <body>
 <div class="container">
 
-  <!-- \u2550\u2550 SCREEN 1: \uc601\ud654 \uc120\ud0dd \u2550\u2550 -->
+  <!-- SCREEN 1 -->
   <div id="screen-select" class="screen active">
     <div class="header">
-      <div class="strip">\ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac</div>
-      <h1>\ud55c\uad6d\uc601\ud654 \ud034\uc988</h1>
-      <p>Movie Quiz Night \u00b7 \uce5c\uad6c\ub4e4\uacfc \ud568\uaed8</p>
+      <div class="strip">🎬 🎞️ 🎬 🎞️ 🎬</div>
+      <h1>최신 영화 퀴즈</h1>
+      <p>Movie Quiz Night · 친구들과 함께</p>
     </div>
-    <div class="sec-label">\ud83c\udfa5 \uc601\ud654 \uc120\ud0dd</div>
+    <div class="sec-label">🎥 영화 선택 (2020년 이후)</div>
     <div class="movie-grid" id="movie-grid"></div>
     <div class="bottom-bar">
-      <div class="sel-info"><b id="sel-count">0</b>\ud3b8 \uc120\ud0dd \u00b7 \ud3b8\ub2f9 5\ubb38\uc81c</div>
+      <div class="sel-info"><b id="sel-count">0</b>편 선택 · 편당 5문제</div>
       <div class="btn-group">
-        <button class="btn btn-ghost" onclick="selectAll()">\uc804\uccb4\uc120\ud0dd</button>
-        <button class="btn btn-ghost" onclick="clearAll()">\ucd08\uae30\ud654</button>
-        <button class="btn btn-primary" id="start-btn" onclick="startQuiz()" disabled>\ud034\uc988 \uc2dc\uc791 \ud83c\udfac</button>
+        <button class="btn btn-ghost" onclick="selectAll()">전체선택</button>
+        <button class="btn btn-ghost" onclick="clearAll()">초기화</button>
+        <button class="btn btn-primary" id="start-btn" onclick="startQuiz()" disabled>퀴즈 시작 🎬</button>
       </div>
     </div>
   </div>
 
-  <!-- \u2550\u2550 SCREEN 2: \ud034\uc988 \u2550\u2550 -->
+  <!-- SCREEN 2 -->
   <div id="screen-quiz" class="screen">
     <div class="quiz-top">
       <div class="movie-badge">
@@ -326,416 +123,260 @@ body {
       <div class="q-meta">
         <div class="q-prog-text" id="q-prog-text"></div>
         <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-        <div class="score-txt">\uc810\uc218 <span id="q-score">0</span></div>
+        <div class="score-txt">점수 <span id="q-score">0</span></div>
       </div>
     </div>
-
     <div id="q-cat" class="q-cat"></div>
     <div id="q-text" class="q-text"></div>
     <div id="opts-grid" class="opts-grid"></div>
-
     <div id="feedback" class="feedback">
       <div id="fb-result" class="fb-result"></div>
       <div id="fb-desc" class="fb-desc"></div>
-      <div class="fb-next">
-        <button class="btn btn-primary" id="next-btn" onclick="nextQ()">\ub2e4\uc74c \ubb38\uc81c \u2192</button>
-      </div>
+      <div class="fb-next"><button class="btn btn-primary" id="next-btn" onclick="nextQ()">다음 문제 →</button></div>
     </div>
   </div>
 
-  <!-- \u2550\u2550 SCREEN 3: \uacb0\uacfc \u2550\u2550 -->
+  <!-- SCREEN 3 -->
   <div id="screen-result" class="screen">
     <div class="result-hero">
       <div class="r-emoji" id="r-emoji"></div>
       <div class="r-grade" id="r-grade"></div>
-      <div class="r-score-line">\ucd1d <span id="r-score"></span>\uc810 / <span id="r-total"></span>\uc810</div>
+      <div class="r-score-line">총 <span id="r-score"></span>점 / <span id="r-total"></span>점</div>
     </div>
-    <div class="sec-label">\ud83d\udcca \uc601\ud654\ubcc4 \uacb0\uacfc</div>
+    <div class="sec-label">📊 영화별 결과</div>
     <div class="movie-results" id="movie-results"></div>
     <div class="result-btns">
-      <button class="btn btn-ghost" onclick="replaySame()">\uac19\uc740 \uc601\ud654\ub85c \uc7ac\ub3c4\uc804</button>
-      <button class="btn btn-primary" onclick="goSelect()">\uc601\ud654 \ub2e4\uc2dc \uc120\ud0dd \ud83c\udfac</button>
+      <button class="btn btn-ghost" onclick="replaySame()">같은 영화로 재도전</button>
+      <button class="btn btn-primary" onclick="goSelect()">영화 다시 선택 🎬</button>
     </div>
   </div>
 
-</div><!-- /container -->
-
+</div>
 <script>
-// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
-//  DATA
-// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
-const MOVIES = [
-  {
-    id:'exhuma', title:'\ud30c\ubb18', year:'2024', emoji:'\u26b0\ufe0f', genre:'\uacf5\ud3ec/\uc624\uceec\ud2b8',
-    questions:[
-      { cat:'c', catLabel:'\ud83d\udc64 \ub4f1\uc7a5\uc778\ubb3c', q:'\ubb34\ub2f9 \ud654\ub9bc\uacfc \ud568\uaed8 \ud65c\ub3d9\ud558\ub294 \uc80a\uc740 \ub0a8\uc131 \ubb34\ub2f9\uc758 \uc774\ub984<!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>\ud83c\udfac \ud55c\uad6d\uc601\ud654 \ud034\uc988</title>
-<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #0a0a0f;
-  --surface: #13131c;
-  --card: #1c1c2e;
-  --accent: #ff3c5f;
-  --accent2: #ffcc00;
-  --accent3: #00e5ff;
-  --text: #f0f0f8;
-  --muted: #7070a0;
-  --correct: #00c97a;
-  --wrong: #ff3c5f;
-  --border: rgba(255,255,255,0.08);
-}
-* { margin:0; padding:0; box-sizing:border-box; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Noto Sans KR', sans-serif;
-  min-height: 100vh;
+var MOVIES = [
+  // ── 왕과 사는 남자 ──
+  {id:'kingsw',title:'왕과 사는 남자',year:'2026',emoji:'👑',genre:'사극/드라마',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'단종(이홍위)의 유배지를 자처한 마을 촌장의 이름은?',opts:['엄흥도','한명회','이문기','김성철'],ans:0,desc:'촌장 엄흥도(유해진)는 마을 부흥을 꿈꾸며 유배지를 자청했다가 어린 단종과 깊은 유대를 맺게 됩니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'단종이 유배된 강원도의 실제 유배지는?',opts:['금강산','청령포','오대산','설악산'],ans:1,desc:'청령포는 삼면이 물로 둘러싸인 강원도 영월의 땅으로, 단종의 유배지로 유명합니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'어린 왕 이홍위가 왕위에서 쫓겨나게 된 사건의 이름은?',opts:['임진왜란','계유정난','정유재란','병자호란'],ans:1,desc:'1453년 계유정난으로 수양대군(세조)이 조카 단종을 몰아내고 왕위를 찬탈했습니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'어린 단종 이홍위 역을 맡아 큰 화제를 모은 배우는?',opts:['안효섭','박지훈','이준혁','유지태'],ans:1,desc:'박지훈이 삶의 의지를 잃은 어린 단종을 섬세하게 연기해 관객들의 눈물을 자아냈습니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"___을/를 지키기 위해 내가 여기 있습니다." 엄흥도가 단종에게 한 대사, 빈칸은?',opts:['나라','마을','전하','백성'],ans:2,desc:'엄흥도가 단종 곁을 끝까지 지키겠다고 다짐하는 장면의 대사입니다.'}
+  ]},
+  // ── 파묘 ──
+  {id:'exhuma',title:'파묘',year:'2024',emoji:'⚰️',genre:'공포/오컬트',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'무당 화림과 함께 활동하는 젊은 남성 무당은?',opts:['봉길','상덕','일출','영근'],ans:0,desc:'봉길(이도현)은 화림과 한 팀으로 움직이는 젊은 무당입니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'문제의 묘가 처음 발견된 장소는?',opts:['경기도 어느 산','전라남도 어느 마을','충청도 야산','강원도 깊은 산속'],ans:0,desc:'경기도의 한 부잣집 뒷산에 묻혀있는 묘가 사건의 발단이 됩니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'묘를 파낸 뒤 등장하는 거대한 존재의 정체는?',opts:['일제강점기 일본 음양사의 악귀','조선시대 억울한 왕족','고려시대 전쟁 영웅','민간 전설 속 구미호'],ans:0,desc:'묘 아래에는 일제강점기 조선의 기운을 억누르기 위한 일본 음양사의 봉인된 존재가 있었습니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"나쁜 것이 들어오지 못하도록 ___을/를 지켜라." 빈칸은?',opts:['문','터','몸','마음'],ans:1,desc:'터를 지켜라 — 묘를 파는 행위가 어떤 결과를 초래하는지 암시하는 대사입니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'베테랑 풍수사 역할을 연기한 배우는?',opts:['최민식','유해진','김고은','이도현'],ans:1,desc:'유해진이 베테랑 풍수사이자 묘를 파는 캐릭터를 맡았습니다.'}
+  ]},
+  // ── 밀수 ──
+  {id:'smugglers',title:'밀수',year:'2023',emoji:'🌊',genre:'액션/범죄',questions:[
+    {cat:'p',catLabel:'📍 장소',q:'영화의 주요 배경은?',opts:['1970년대 부산항','1980년대 인천 어촌','1970년대 경남 바닷가 마을','1960년대 제주도'],ans:2,desc:'1970년대 경상남도 작은 어촌 마을을 배경으로 해녀들의 삶과 밀수 세계가 교차합니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'춘자와 함께 주인공을 이루는 해녀의 이름은?',opts:['진숙','영희','말순','복순'],ans:0,desc:'진숙(김혜수)과 춘자(염정아)는 오랜 친구이자 경쟁자입니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'해녀들이 바다에서 몰래 건져 올리는 밀수품은?',opts:['마약','금괴','외제 물건 보따리','고급 화장품'],ans:2,desc:'당시 수입 금지된 외제 생활용품을 바다에서 건져 올리는 것이 밀수의 핵심입니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'밀수 조직의 보스 이름은?',opts:['권상사','도삼','박창인','이중식'],ans:1,desc:'도삼(조인성)은 해녀들을 이용해 밀수 사업을 벌이는 카리스마 있는 악역입니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"우리가 이 바다에서 먹고사는 한 ___는 우리 편이야." 빈칸은?',opts:['파도','바다','물고기','하늘'],ans:1,desc:'해녀들이 바다를 삶의 터전으로 여기는 마음이 담긴 대사입니다.'}
+  ]},
+  // ── 콘크리트 유토피아 ──
+  {id:'concrete',title:'콘크리트 유토피아',year:'2023',emoji:'🏢',genre:'재난/드라마',questions:[
+    {cat:'p',catLabel:'📍 장소',q:'대지진 이후 유일하게 살아남은 아파트 이름은?',opts:['황궁 아파트','영탑 아파트','하늘 아파트','태양 아파트'],ans:0,desc:'황궁 아파트만이 살아남아 생존자들의 갈등과 계급 문제가 펼쳐집니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'주민 대표로 선출되어 독단적 지도력을 보이는 인물은?',opts:['영탁','민성','명화','혜원'],ans:0,desc:'영탁(이병헌)은 카리스마 있는 주민 대표로 선출되지만 점점 폭압적으로 변합니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'아파트 주민들이 외부인을 대하는 방식은?',opts:['적극적으로 수용','투표로 결정','철저히 배제','일부만 선별 수용'],ans:2,desc:'주민들은 외부인을 철저히 배제하며 이것이 영화의 핵심 갈등을 만듭니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"여기는 우리 ___야. 넌 여기 사람이 아니잖아." 빈칸은?',opts:['집','아파트','나라','구역'],ans:1,desc:'공동체의 이기심과 배타성을 상징하는 장면에서 등장하는 대사입니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'영탁의 정체에 의문을 품는 커플은?',opts:['민성 & 명화','영탁 & 혜원','도균 & 지수','용철 & 보경'],ans:0,desc:'민성(박서준)과 명화(박보영) 커플이 영탁의 비밀을 파헤칩니다.'}
+  ]},
+  // ── 서울의 봄 ──
+  {id:'spring',title:'서울의 봄',year:'2023',emoji:'🌸',genre:'역사/드라마',questions:[
+    {cat:'s',catLabel:'📖 줄거리',q:'영화가 다루는 역사적 사건은?',opts:['4·19 혁명','5·18 민주화운동','12·12 군사반란','6·25 전쟁'],ans:2,desc:'1979년 12월 12일, 전두환을 모델로 한 신군부가 일으킨 군사 반란이 중심입니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'반란을 이끄는 전두광의 실제 역사적 모델은?',opts:['노태우','전두환','박정희','김재규'],ans:1,desc:'전두광이라는 가상 이름이지만, 실제 전두환을 모델로 한 캐릭터입니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'쿠데타에 맞서 헌법 수호를 외치는 수도경비사령관은?',opts:['이태신','김준엽','박도원','노재현'],ans:0,desc:'이태신(정우성)은 군의 명령체계와 헌법을 지키기 위해 홀로 맞서는 비극적 인물입니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"군인은 ___을/를 지켜야 합니다!" 이태신의 대사, 빈칸은?',opts:['나라','국민','헌법','상관'],ans:2,desc:'"헌법을 지켜야 합니다"는 이 영화에서 가장 감동적인 대사 중 하나입니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'군사반란의 핵심 거점으로 장악된 시설은?',opts:['청와대','국방부 지하벙커','육군본부','보안사'],ans:2,desc:'육군본부 장악이 반란의 핵심 작전이었으며 이를 둘러싼 긴장이 최대 클라이맥스를 이룹니다.'}
+  ]},
+  // ── 범죄도시4 ──
+  {id:'crime',title:'범죄도시4',year:'2024',emoji:'🔥',genre:'액션/범죄',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'마석도(마동석)의 트레이드마크 특기는?',opts:['총기 사격','주먹 한 방','심리전','잠입 수사'],ans:1,desc:'범인을 단 한 방에 제압하는 압도적인 주먹이 마석도의 매력입니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'4편에서 마석도가 맞서는 범죄 유형은?',opts:['마약 밀수','온라인 금융 사기','무기 밀매','장기 밀매'],ans:1,desc:'이번 편에서는 온라인 도박과 보이스피싱 등 사이버 금융 범죄 조직을 상대합니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'냉혹한 악역 범죄 조직 보스를 연기한 배우는?',opts:['손석구','허준호','이동욱','김무열'],ans:1,desc:'허준호가 냉혹하고 지능적인 악역 보스를 연기해 마동석과의 대립 구도를 형성합니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'수사의 주요 무대가 된 해외 국가는?',opts:['부산','마카오','필리핀','태국'],ans:2,desc:'필리핀을 거점으로 한 국제 범죄 조직과의 싸움이 펼쳐집니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"나쁜 놈들은 다 ___." 마석도의 원칙, 빈칸은?',opts:['잡혀야 해','내가 잡는다','때려야 해','죗값을 치른다'],ans:1,desc:'"내가 직접 잡는다"는 원칙이 시리즈 전반을 관통하는 마석도의 매력입니다.'}
+  ]},
+  // ── 좀비딸 ──
+  {id:'zombiedaughter',title:'좀비딸',year:'2025',emoji:'🧟',genre:'코미디/가족',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'딸을 지키기 위해 고군분투하는 아빠 정환의 직업은?',opts:['경찰관','의사','맹수 전문 사육사','번역가'],ans:2,desc:'정환(조정석)은 호랑이 사육사 경험을 살려 좀비가 된 딸 수아를 훈련시킵니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'좀비가 된 손녀를 효자손 하나로 제압하는 할머니 이름은?',opts:['밤순','복순','영순','말순'],ans:0,desc:'김밤순(이정은)은 집안의 실세로, 효자손 하나로 좀비 손녀를 제지하는 최강 캐릭터입니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'정환이 딸 수아를 데리고 피신하는 바닷가 마을 이름은?',opts:['은봉리','청포리','화도리','죽변리'],ans:0,desc:'은봉리는 할머니 밤순이 사는 조용한 바닷가 마을로 영화의 주요 배경입니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'좀비가 된 수아가 유일하게 반응하는 것 두 가지는?',opts:['음식과 음악','춤과 할머니의 효자손','아빠 목소리와 향기','빛과 소리'],ans:1,desc:'수아는 평소 좋아하던 춤과 할머니의 효자손 자극에 반응하는 모습을 보여줍니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"우리 애는 안 ___요!" 정환이 외치는 대사, 빈칸은?',opts:['나빠','물어','도망가','이상해'],ans:1,desc:'"우리 애는 안 물어요!" — 딸을 지키려는 아버지의 절박함과 유머가 담긴 명대사입니다.'}
+  ]},
+  // ── 신의악단 ──
+  {id:'godband',title:'신의악단',year:'2025',emoji:'🎵',genre:'드라마',questions:[
+    {cat:'s',catLabel:'📖 줄거리',q:'북한이 2억 달러 지원을 얻기 위해 조건으로 제시받은 것은?',opts:['핵무기 포기 선언','평양에 교회 건립 + 해외 부흥회 개최','남북 정상회담','외국 기업 유치'],ans:1,desc:'NGO 측이 평양에 교회 2개 건설과 외국 위원단 앞 부흥회 개최를 조건으로 내걸었습니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'가짜 찬양단을 만드는 임무를 맡은 기관은?',opts:['외무성','인민군','보위부','노동당'],ans:2,desc:'당의 명령을 받은 보위부가 북한 최초의 가짜 찬양단(승리악단) 조직을 맡게 됩니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'악단을 이끄는 주인공 교순을 연기한 배우는?',opts:['정진운','박시후','태항호','이준혁'],ans:1,desc:'박시후가 가짜 찬양단을 만들며 악단원들과 깊은 정을 쌓게 되는 교순 역을 맡았습니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'북한 외교관들이 NGO로부터 지원을 거부당한 해외 도시는?',opts:['베이징','모스크바','부다페스트','프라하'],ans:2,desc:'헝가리 부다페스트에서 국제사회의 제재로 지원 협상이 좌절되며 이야기가 시작됩니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'악단원이 "___를 언제 배웠냐?"는 질문에 "형이 이걸 배우면 절세미인을 만날 수 있다고 했다"고 답한 악기는?',opts:['피아노','얼후','바이올린','기타'],ans:1,desc:'얼후는 중국 전통 악기로, 극 중 김성철의 얼후 연주 장면이 인상적인 장면으로 남습니다.'}
+  ]},
+  // ── 케이팝 데몬 헌터스 ──
+  {id:'kpdh',title:'케이팝 데몬 헌터스',year:'2025',emoji:'😈',genre:'애니/액션',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'케이팝 걸그룹 헌트릭스의 멤버 수는?',opts:['2명','3명','4명','5명'],ans:1,desc:'헌트릭스(HUNTR/X)는 루미, 미라, 조이로 구성된 3인조 케이팝 걸그룹입니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'헌트릭스가 비밀리에 수행하는 두 번째 역할은?',opts:['케이팝 스파이','악마 사냥꾼','시간 여행자','우주 방위대'],ans:1,desc:'헌트릭스는 케이팝 활동을 하면서 비밀리에 악마 사냥꾼으로 팬들을 초자연적 위협에서 보호합니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'헌트릭스의 라이벌 보이그룹 이름은?',opts:['다크존','사자 보이즈','블랙썬더','귀마단'],ans:1,desc:'사자 보이즈(Saja Boys)는 악령으로 이루어진 보이그룹으로 헌트릭스의 주요 적입니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'영화 속 K-팝 공연 배경으로 등장하는 서울의 랜드마크는?',opts:['광화문','한강대교','남산타워','경복궁'],ans:2,desc:'남산타워(N서울타워)를 비롯한 서울의 실제 배경들이 자연스럽게 반영되었습니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'헌트릭스의 대표곡 중 빌보드 차트 1위를 기록한 곡은?',opts:['Takedown','Golden','Soda Pop','Moonlight'],ans:1,desc:'헌트릭스의 "Golden"이 빌보드 차트 1위를 기록하며 사자 보이즈의 곡과 차트 경쟁을 펼쳤습니다.'}
+  ]},
+  // ── 주토피아 2 ──
+  {id:'zootopia2',title:'주토피아 2',year:'2025',emoji:'🐰',genre:'애니/어드벤처',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'주디와 닉이 이번 편에서 추적하는 새로운 캐릭터의 이름과 동물은?',opts:['필, 곰','게리, 뱀','니블스, 비버','타이터스, 벌레'],ans:1,desc:'게리(Gary) 드스네이크는 파란 살무사로, 이번 편의 핵심 신규 캐릭터입니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'게리가 훔치려 한 오래된 일지에 담긴 비밀은?',opts:['악당 조직의 명단','주토피아 진짜 설립자 기록','기후 장벽 설계도','금괴 위치'],ans:1,desc:'아그네스라는 뱀이 주토피아의 진짜 설립자였지만 공로를 빼앗겼다는 사실이 담겨 있습니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'파충류들이 숨어 사는 주토피아의 숨겨진 지역 이름은?',opts:['마시 마켓','섀도우랜드','렙타운','딥존'],ans:0,desc:'마시 마켓(Marshy Market)은 파충류 공동체가 몰래 숨어 생활하는 외딴 지역입니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'닉 와일드의 한국어 더빙판 성우는 어떤 유형의 캐릭터인가?',opts:['장난꾸러기 여우 경찰','용감한 토끼 경찰','차가운 악당','코미디 조연'],ans:0,desc:'닉 와일드는 한때 사기꾼이었던 장난꾸러기 여우가 경찰이 된 캐릭터로 주디의 파트너입니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"주토피아에서는 누구나 ___이/가 될 수 있어." 주디의 신념, 빈칸은?',opts:['강자','무엇이든','경찰','행복'],ans:1,desc:'주토피아의 모토이자 주디의 신념인 "누구나 무엇이든 될 수 있다"는 시리즈 전체를 관통하는 메시지입니다.'}
+  ]},
+  // ── 호퍼스 ──
+  {id:'hoppers',title:'호퍼스',year:'2026',emoji:'🦫',genre:'픽사/모험',questions:[
+    {cat:'c',catLabel:'👤 등장인물',q:'의식을 로봇 비버로 옮겨 동물 세계에 잠입하는 소녀 이름은?',opts:['줄리','메이블','그레이스','에이미'],ans:1,desc:'메이블은 할머니와의 추억이 깃든 연못을 지키기 위해 비버 로봇에 의식을 옮겨 동물 세계로 잠입합니다.'},
+    {cat:'s',catLabel:'📖 줄거리',q:'메이블이 비버 세계에 잠입한 목적은?',opts:['비버를 구경하기 위해','할머니 연못을 지키기 위해','과학 실험 때문에','도망치기 위해'],ans:1,desc:'부동산 개발업체가 연못을 없애려 하자, 메이블은 이를 막기 위해 동물 세계에 잠입합니다.'},
+    {cat:'c',catLabel:'👤 등장인물',q:'비버들의 왕 이름은?',opts:['조지','타이터스','샘','맥스'],ans:0,desc:'킹 조지는 비버들의 왕으로 메이블과 친구가 되는 핵심 캐릭터입니다.'},
+    {cat:'p',catLabel:'📍 장소',q:'메이블이 동물 세계에 잠입할 때 사용하는 기술의 이름은?',opts:['점프','호핑','스위칭','다이빙'],ans:1,desc:'"호핑(Hopping)"은 사람의 의식을 동물 로봇으로 옮기는 혁신적인 기술로 영화 제목의 유래입니다.'},
+    {cat:'q',catLabel:'💬 명대사',q:'"비버 모드 ON! 좋아, ___었어!" 메이블의 대사, 빈칸은?',opts:['완벽했','자연스러웠','재밌었','용감했'],ans:1,desc:'"비버 모드 ON! 좋아, 자연스러웠어!" — 메이블이 동물 세계에 처음 잠입할 때의 유쾌한 대사입니다.'}
+  ]}
+];
+
+var selected=[],queue=[],cur=0,score=0,mScores={},answered=false;
+
+function showScreen(id){
+  var s=document.querySelectorAll('.screen');
+  for(var i=0;i<s.length;i++)s[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
 }
 
-/* \u2500\u2500 SCREENS \u2500\u2500 */
-.screen { display: none; }
-.screen.active { display: block; }
+(function(){
+  var g=document.getElementById('movie-grid');
+  for(var i=0;i<MOVIES.length;i++){
+    var m=MOVIES[i],d=document.createElement('div');
+    d.className='movie-card';d.id='card-'+m.id;
+    d.innerHTML='<div class="chk">✓</div><div class="m-emoji">'+m.emoji+'</div><div class="m-title">'+m.title+'</div><div class="m-year">'+m.year+'</div><div class="m-genre">'+m.genre+'</div>';
+    (function(id){d.addEventListener('click',function(){toggleMovie(id);});})(m.id);
+    g.appendChild(d);
+  }
+})();
 
-.container {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 20px 80px;
+function toggleMovie(id){
+  var idx=selected.indexOf(id),card=document.getElementById('card-'+id);
+  if(idx===-1){selected.push(id);card.classList.add('selected');}
+  else{selected.splice(idx,1);card.classList.remove('selected');}
+  document.getElementById('sel-count').textContent=selected.length;
+  document.getElementById('start-btn').disabled=selected.length===0;
 }
-
-/* \u2500\u2500 HEADER \u2500\u2500 */
-.header {
-  text-align: center;
-  padding: 44px 0 36px;
+function selectAll(){
+  for(var i=0;i<MOVIES.length;i++){
+    var m=MOVIES[i];
+    if(selected.indexOf(m.id)===-1){selected.push(m.id);document.getElementById('card-'+m.id).classList.add('selected');}
+  }
+  document.getElementById('sel-count').textContent=selected.length;
+  document.getElementById('start-btn').disabled=false;
 }
-.header .strip { font-size: 1.8rem; letter-spacing: 6px; margin-bottom: 14px; }
-.header h1 {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(2.2rem, 7vw, 3.6rem);
-  background: linear-gradient(135deg, #ffcc00, #ff3c5f, #00e5ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.1;
-  margin-bottom: 8px;
+function clearAll(){
+  selected=[];
+  for(var i=0;i<MOVIES.length;i++)document.getElementById('card-'+MOVIES[i].id).classList.remove('selected');
+  document.getElementById('sel-count').textContent=0;
+  document.getElementById('start-btn').disabled=true;
 }
-.header p { color: var(--muted); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
-
-/* \u2500\u2500 SECTION LABEL \u2500\u2500 */
-.sec-label {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 1rem;
-  color: var(--accent3);
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  margin-bottom: 18px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border);
+function buildQueue(){
+  queue=[];mScores={};
+  for(var i=0;i<selected.length;i++){
+    var mid=selected[i],movie=null;
+    for(var j=0;j<MOVIES.length;j++){if(MOVIES[j].id===mid){movie=MOVIES[j];break;}}
+    if(!movie)continue;
+    mScores[mid]={correct:0,total:movie.questions.length,title:movie.title,emoji:movie.emoji};
+    for(var k=0;k<movie.questions.length;k++)queue.push({mid:mid,qi:k});
+  }
+  for(var x=queue.length-1;x>0;x--){var y=Math.floor(Math.random()*(x+1)),t=queue[x];queue[x]=queue[y];queue[y]=t;}
 }
-
-/* \u2500\u2500 MOVIE GRID \u2500\u2500 */
-.movie-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 28px;
+function startQuiz(){
+  if(selected.length===0)return;
+  buildQueue();cur=0;score=0;answered=false;
+  showScreen('screen-quiz');renderQ();
 }
-.movie-card {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 16px 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  position: relative;
-  user-select: none;
+function getMovie(id){for(var i=0;i<MOVIES.length;i++)if(MOVIES[i].id===id)return MOVIES[i];return null;}
+function renderQ(){
+  answered=false;
+  var item=queue[cur],movie=getMovie(item.mid),q=movie.questions[item.qi];
+  document.getElementById('q-emoji').textContent=movie.emoji;
+  document.getElementById('q-title').textContent=movie.title;
+  document.getElementById('q-prog-text').textContent=(cur+1)+' / '+queue.length;
+  document.getElementById('prog-fill').style.width=(cur/queue.length*100)+'%';
+  document.getElementById('q-score').textContent=score;
+  var catMap={c:'cat-c',p:'cat-p',q:'cat-q',s:'cat-s'},catEl=document.getElementById('q-cat');
+  catEl.textContent=q.catLabel;catEl.className='q-cat '+(catMap[q.cat]||'cat-s');
+  document.getElementById('q-text').textContent=q.q;
+  var grid=document.getElementById('opts-grid');grid.innerHTML='';
+  var labels=['A','B','C','D'];
+  for(var i=0;i<q.opts.length;i++){
+    var btn=document.createElement('button');
+    btn.className='opt-btn';
+    btn.innerHTML='<span class="opt-lbl">'+labels[i]+'</span><span>'+q.opts[i]+'</span>';
+    (function(idx,ans,desc){btn.addEventListener('click',function(){pick(idx,ans,desc);});})(i,q.ans,q.desc);
+    grid.appendChild(btn);
+  }
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').textContent=(cur===queue.length-1)?'결과 보기 🏆':'다음 문제 →';
 }
-.movie-card:hover { border-color: rgba(255,204,0,0.4); transform: translateY(-2px); }
-.movie-card.selected {
-  border-color: var(--accent2);
-  background: rgba(255,204,0,0.07);
-  box-shadow: 0 0 18px rgba(255,204,0,0.15);
+function pick(sel,ans,desc){
+  if(answered)return;answered=true;
+  var btns=document.querySelectorAll('.opt-btn');
+  for(var i=0;i<btns.length;i++){
+    btns[i].disabled=true;
+    if(i===ans)btns[i].classList.add('correct');
+    else if(i===sel)btns[i].classList.add('wrong');
+    else btns[i].classList.add('dim');
+  }
+  var ok=sel===ans;
+  if(ok){score+=10;mScores[queue[cur].mid].correct++;}
+  document.getElementById('q-score').textContent=score;
+  var fb=document.getElementById('feedback'),fbRes=document.getElementById('fb-result');
+  document.getElementById('fb-desc').textContent=desc;
+  if(ok){fbRes.textContent='✅ 정답! +10점';fbRes.className='fb-result ok';fb.className='feedback show';}
+  else{fbRes.textContent='❌ 오답! 정답은 '+['A','B','C','D'][ans]+'번';fbRes.className='fb-result fail';fb.className='feedback show fail-fb';}
 }
-.movie-card .chk {
-  position: absolute; top: 10px; right: 10px;
-  width: 22px; height: 22px;
-  background: var(--accent2); border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: bold; color: #000;
-  opacity: 0; transform: scale(0);
-  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+function nextQ(){
+  if(!answered)return;cur++;
+  if(cur>=queue.length)showResult();else renderQ();
 }
-.movie-card.selected .chk { opacity: 1; transform: scale(1); }
-.movie-card .m-emoji { font-size: 1.8rem; margin-bottom: 8px; }
-.movie-card .m-title {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 0.95rem; color: var(--text); margin-bottom: 3px;
+function showResult(){
+  showScreen('screen-result');
+  var total=queue.length*10,pct=total>0?score/total:0;
+  var emoji,grade;
+  if(pct>=.9){emoji='🏆';grade='영화 박사!';}
+  else if(pct>=.7){emoji='🎬';grade='영화 마니아';}
+  else if(pct>=.5){emoji='🍿';grade='영화 관람객';}
+  else if(pct>=.3){emoji='😅';grade='예습이 필요해요';}
+  else{emoji='😴';grade='영화 다시 보고 오기';}
+  document.getElementById('r-emoji').textContent=emoji;
+  document.getElementById('r-grade').textContent=grade;
+  document.getElementById('r-score').textContent=score;
+  document.getElementById('r-total').textContent=total;
+  var container=document.getElementById('movie-results');container.innerHTML='';
+  for(var i=0;i<selected.length;i++){
+    var mid=selected[i],ms=mScores[mid];if(!ms)continue;
+    var ratio=ms.correct/ms.total,cls=ratio>=.8?'hi':ratio>=.5?'md':'lo';
+    var row=document.createElement('div');row.className='mr-row';
+    row.innerHTML='<div class="mr-left"><div class="mr-em">'+ms.emoji+'</div><div class="mr-ttl">'+ms.title+'</div></div><div class="mr-right"><div class="mr-bar-wrap"><div class="mr-bar '+cls+'" id="bar-'+mid+'" style="width:0%"></div></div><div class="mr-num">'+ms.correct+'/'+ms.total+'</div></div>';
+    container.appendChild(row);
+  }
+  setTimeout(function(){
+    for(var i=0;i<selected.length;i++){
+      var mid=selected[i],ms=mScores[mid];if(!ms)continue;
+      var el=document.getElementById('bar-'+mid);
+      if(el)el.style.width=Math.round(ms.correct/ms.total*100)+'%';
+    }
+  },150);
 }
-.movie-card .m-year { font-size: 0.72rem; color: var(--muted); }
-.movie-card .m-genre {
-  display: inline-block; margin-top: 7px;
-  padding: 2px 8px; border-radius: 20px;
-  background: rgba(255,255,255,0.05);
-  font-size: 0.68rem; color: var(--muted);
-}
-
-/* \u2500\u2500 BOTTOM BAR \u2500\u2500 */
-.bottom-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 22px;
-  margin-top: 8px;
-}
-.sel-info { color: var(--muted); font-size: 0.9rem; }
-.sel-info b { color: var(--accent2); font-size: 1.15rem; font-family: 'Black Han Sans', sans-serif; }
-.btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
-
-/* \u2500\u2500 BUTTONS \u2500\u2500 */
-.btn {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 0.95rem;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-.btn-primary {
-  background: linear-gradient(135deg, #ff3c5f, #ff6b35);
-  color: #fff;
-  box-shadow: 0 4px 18px rgba(255,60,95,0.3);
-}
-.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,60,95,0.45); }
-.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-.btn-ghost {
-  background: transparent; color: var(--muted);
-  border: 1.5px solid var(--border);
-}
-.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
-
-/* \u2500\u2500 QUIZ HEADER \u2500\u2500 */
-.quiz-top {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 22px 0 16px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 24px;
-  flex-wrap: wrap; gap: 12px;
-}
-.movie-badge { display: flex; align-items: center; gap: 10px; }
-.badge-emoji { font-size: 1.4rem; }
-.badge-title { font-family: 'Black Han Sans', sans-serif; font-size: 1rem; color: var(--accent2); }
-
-.q-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-.q-prog-text { font-size: 0.78rem; color: var(--muted); }
-.prog-bar { width: 150px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s ease; }
-.score-txt { font-size: 0.78rem; color: var(--muted); }
-.score-txt span { color: var(--correct); font-family: 'Black Han Sans', sans-serif; font-size: 1rem; }
-
-/* \u2500\u2500 QUESTION \u2500\u2500 */
-.q-cat {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 4px 14px; border-radius: 20px;
-  font-size: 0.73rem; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
-  margin-bottom: 14px;
-}
-.cat-c { background: rgba(255,204,0,0.14); color: var(--accent2); border: 1px solid rgba(255,204,0,0.3); }
-.cat-p { background: rgba(0,229,255,0.1); color: var(--accent3); border: 1px solid rgba(0,229,255,0.25); }
-.cat-q { background: rgba(255,60,95,0.1); color: var(--accent); border: 1px solid rgba(255,60,95,0.25); }
-.cat-s { background: rgba(160,110,255,0.1); color: #b08bff; border: 1px solid rgba(160,110,255,0.25); }
-
-.q-text {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(1.2rem, 3.5vw, 1.65rem);
-  line-height: 1.45;
-  margin-bottom: 26px;
-}
-
-/* \u2500\u2500 OPTIONS \u2500\u2500 */
-.opts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-@media (max-width: 480px) { .opts-grid { grid-template-columns: 1fr; } }
-
-.opt-btn {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 16px;
-  text-align: left;
-  cursor: pointer;
-  display: flex; align-items: center; gap: 12px;
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 0.92rem;
-  color: var(--text);
-  transition: all 0.18s ease;
-  line-height: 1.4;
-}
-.opt-btn:hover:not(:disabled) { border-color: rgba(255,204,0,0.4); background: rgba(255,204,0,0.04); transform: translateX(4px); }
-.opt-lbl {
-  width: 28px; height: 28px; min-width: 28px;
-  border-radius: 7px;
-  background: rgba(255,255,255,0.06);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: 0.82rem;
-  transition: all 0.2s;
-}
-.opt-btn.correct { border-color: var(--correct); background: rgba(0,201,122,0.1); }
-.opt-btn.correct .opt-lbl { background: var(--correct); color: #000; }
-.opt-btn.wrong { border-color: var(--wrong); background: rgba(255,60,95,0.08); }
-.opt-btn.wrong .opt-lbl { background: var(--wrong); color: #fff; }
-.opt-btn.dim { opacity: 0.38; }
-.opt-btn:disabled { cursor: default; }
-
-/* \u2500\u2500 FEEDBACK \u2500\u2500 */
-.feedback {
-  background: var(--surface);
-  border-left: 3px solid var(--correct);
-  border-radius: 12px;
-  padding: 16px 18px;
-  display: none;
-  animation: fadeUp 0.28s ease;
-}
-.feedback.show { display: block; }
-.feedback.fail-fb { border-left-color: var(--wrong); }
-.fb-result { font-family: 'Black Han Sans', sans-serif; font-size: 1.05rem; margin-bottom: 6px; }
-.fb-result.ok { color: var(--correct); }
-.fb-result.fail { color: var(--wrong); }
-.fb-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
-.fb-next { text-align: right; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* \u2500\u2500 RESULT \u2500\u2500 */
-.result-hero { text-align: center; padding: 48px 0 36px; }
-.r-emoji { font-size: 3.8rem; margin-bottom: 14px; }
-.r-grade {
-  font-family: 'Black Han Sans', sans-serif;
-  font-size: clamp(1.8rem, 6vw, 3rem);
-  background: linear-gradient(135deg, var(--accent2), var(--accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 10px;
-}
-.r-score-line { font-size: 1rem; color: var(--muted); }
-.r-score-line span { font-family: 'Black Han Sans', sans-serif; font-size: 1.8rem; color: var(--text); }
-
-.movie-results { display: grid; gap: 10px; margin: 28px 0; }
-.mr-row {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.mr-left { display: flex; align-items: center; gap: 10px; }
-.mr-em { font-size: 1.3rem; }
-.mr-ttl { font-family: 'Black Han Sans', sans-serif; font-size: 0.95rem; }
-.mr-right { display: flex; align-items: center; gap: 10px; }
-.mr-bar-wrap { width: 90px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
-.mr-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
-.mr-bar.hi { background: var(--correct); }
-.mr-bar.md { background: var(--accent2); }
-.mr-bar.lo { background: var(--wrong); }
-.mr-num { font-family: 'Black Han Sans', sans-serif; font-size: 0.88rem; min-width: 38px; text-align: right; }
-
-.result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-</style>
-</head>
-<body>
-<div class="container">
-
-  <!-- \u2550\u2550 SCREEN 1: \uc601\ud654 \uc120\ud0dd \u2550\u2550 -->
-  <div id="screen-select" class="screen active">
-    <div class="header">
-      <div class="strip">\ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac</div>
-      <h1>\ud55c\uad6d\uc601\ud654 \ud034\uc988</h1>
-      <p>Movie Quiz Night \u00b7 \uce5c\uad6c\ub4e4\uacfc \ud568\uaed8</p>
-    </div>
-    <div class="sec-label">\ud83c\udfa5 \uc601\ud654 \uc120\ud0dd</div>
-    <div class="movie-grid" id="movie-grid"></div>
-    <div class="bottom-bar">
-      <div class="sel-info"><b id="sel-count">0</b>\ud3b8 \uc120\ud0dd \u00b7 \ud3b8\ub2f9 5\ubb38\uc81c</div>
-      <div class="btn-group">
-        <button class="btn btn-ghost" onclick="selectAll()">\uc804\uccb4\uc120\ud0dd</button>
-        <button class="btn btn-ghost" onclick="clearAll()">\ucd08\uae30\ud654</button>
-        <button class="btn btn-primary" id="start-btn" onclick="startQuiz()" disabled>\ud034\uc988 \uc2dc\uc791 \ud83c\udfac</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- \u2550\u2550 SCREEN 2: \ud034\uc988 \u2550\u2550 -->
-  <div id="screen-quiz" class="screen">
-    <div class="quiz-top">
-      <div class="movie-badge">
-        <span class="badge-emoji" id="q-emoji"></span>
-        <span class="badge-title" id="q-title"></span>
-      </div>
-      <div class="q-meta">
-        <div class="q-prog-text" id="q-prog-text"></div>
-        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
-        <div class="score-txt">\uc810\uc218 <span id="q-score">0</span></div>
-      </div>
-    </div>
-
-    <div id="q-cat" class="q-cat"></div>
-    <div id="q-text" class="q-text"></div>
-    <div id="opts-grid" class="opts-grid"></div>
-
-    <div id="feedback" class="feedback">
-      <div id="fb-result" class="fb-result"></div>
-      <div id="fb-desc" class="fb-desc"></div>
-      <div class="fb-next">
-        <button class="btn btn-primary" id="next-btn" onclick="nextQ()">\ub2e4\uc74c \ubb38\uc81c \u2192</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- \u2550\u2550 SCREEN 3: \uacb0\uacfc \u2550\u2550 -->
-  <div id="screen-result" class="screen">
-    <div class="result-hero">
-      <div class="r-emoji" id="r-emoji"></div>
-      <div class="r-grade" id="r-grade"></div>
-      <div class="r-score-line">\ucd1d <span id="r-score"></span>\uc810 / <span id="r-total"></span>\uc810</div>
-    </div>
-    <div class="sec-label">\ud83d\udcca \uc601\ud654\ubcc4 \uacb0\uacfc</div>
-    <div class="movie-results" id="movie-results"></div>
-    <div class="result-btns">
-      <button class="btn btn-ghost" onclick="replaySame()">\uac19\uc740 \uc601\ud654\ub85c \uc7ac\ub3c4\uc804</button>
-      <button class="btn btn-primary" onclick="goSelect()">\uc601\ud654 \ub2e4\uc2dc \uc120\ud0dd \ud83c\udfac</button>
-    </div>
-  </div>
-
-</div><!-- /container -->
-
-<script>
-// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
-//  DATA
-// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
-const MOVIES = [
-  {
-    id:'exhuma', title:'\ud30c\ubb18', year:'2024', emoji:'\u26b0\ufe0f', genre:'\uacf5\ud3ec/\uc624\uceec\ud2b8',
-    questions:[
-      { cat:'c', catLabel:'\ud83d\udc64 \ub4f1\uc7a5\uc778\ubb3c', q:'\ubb34\ub2f9 \ud654\ub9bc\uacfc \ud568\uaed8 \ud65c\ub3d9\ud558\ub294 \uc80a\uc740 \ub0a8\uc131 \ubb34\ub2f9\uc758 \uc774\ub984
+function replaySame(){buildQueue();cur=0;score=0;answered=false;showScreen('screen-quiz');renderQ();}
+function goSelect(){showScreen('screen-select');}
+</script>
+</body>
+</html>
