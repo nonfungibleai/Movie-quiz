@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>\ud83c\udfac \ud55c\uad6d\uc601\ud654 \ud034\uc988</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131c;
+  --card: #1c1c2e;
+  --accent: #ff3c5f;
+  --accent2: #ffcc00;
+  --accent3: #00e5ff;
+  --text: #f0f0f8;
+  --muted: #7070a0;
+  --correct: #00c97a;
+  --wrong: #ff3c5f;
+  --border: rgba(255,255,255,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  min-height: 100vh;
+}
+
+/* \u2500\u2500 SCREENS \u2500\u2500 */
+.screen { display: none; }
+.screen.active { display: block; }
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* \u2500\u2500 HEADER \u2500\u2500 */
+.header {
+  text-align: center;
+  padding: 44px 0 36px;
+}
+.header .strip { font-size: 1.8rem; letter-spacing: 6px; margin-bottom: 14px; }
+.header h1 {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  background: linear-gradient(135deg, #ffcc00, #ff3c5f, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.header p { color: var(--muted); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
+
+/* \u2500\u2500 SECTION LABEL \u2500\u2500 */
+.sec-label {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--accent3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* \u2500\u2500 MOVIE GRID \u2500\u2500 */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.movie-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+}
+.movie-card:hover { border-color: rgba(255,204,0,0.4); transform: translateY(-2px); }
+.movie-card.selected {
+  border-color: var(--accent2);
+  background: rgba(255,204,0,0.07);
+  box-shadow: 0 0 18px rgba(255,204,0,0.15);
+}
+.movie-card .chk {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  background: var(--accent2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: bold; color: #000;
+  opacity: 0; transform: scale(0);
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.movie-card.selected .chk { opacity: 1; transform: scale(1); }
+.movie-card .m-emoji { font-size: 1.8rem; margin-bottom: 8px; }
+.movie-card .m-title {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 0.95rem; color: var(--text); margin-bottom: 3px;
+}
+.movie-card .m-year { font-size: 0.72rem; color: var(--muted); }
+.movie-card .m-genre {
+  display: inline-block; margin-top: 7px;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  font-size: 0.68rem; color: var(--muted);
+}
+
+/* \u2500\u2500 BOTTOM BAR \u2500\u2500 */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 22px;
+  margin-top: 8px;
+}
+.sel-info { color: var(--muted); font-size: 0.9rem; }
+.sel-info b { color: var(--accent2); font-size: 1.15rem; font-family: 'Black Han Sans', sans-serif; }
+.btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* \u2500\u2500 BUTTONS \u2500\u2500 */
+.btn {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 0.95rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #ff3c5f, #ff6b35);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(255,60,95,0.3);
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,60,95,0.45); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-ghost {
+  background: transparent; color: var(--muted);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+
+/* \u2500\u2500 QUIZ HEADER \u2500\u2500 */
+.quiz-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  flex-wrap: wrap; gap: 12px;
+}
+.movie-badge { display: flex; align-items: center; gap: 10px; }
+.badge-emoji { font-size: 1.4rem; }
+.badge-title { font-family: 'Black Han Sans', sans-serif; font-size: 1rem; color: var(--accent2); }
+
+.q-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.q-prog-text { font-size: 0.78rem; color: var(--muted); }
+.prog-bar { width: 150px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s ease; }
+.score-txt { font-size: 0.78rem; color: var(--muted); }
+.score-txt span { color: var(--correct); font-family: 'Black Han Sans', sans-serif; font-size: 1rem; }
+
+/* \u2500\u2500 QUESTION \u2500\u2500 */
+.q-cat {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.73rem; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.cat-c { background: rgba(255,204,0,0.14); color: var(--accent2); border: 1px solid rgba(255,204,0,0.3); }
+.cat-p { background: rgba(0,229,255,0.1); color: var(--accent3); border: 1px solid rgba(0,229,255,0.25); }
+.cat-q { background: rgba(255,60,95,0.1); color: var(--accent); border: 1px solid rgba(255,60,95,0.25); }
+.cat-s { background: rgba(160,110,255,0.1); color: #b08bff; border: 1px solid rgba(160,110,255,0.25); }
+
+.q-text {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: clamp(1.2rem, 3.5vw, 1.65rem);
+  line-height: 1.45;
+  margin-bottom: 26px;
+}
+
+/* \u2500\u2500 OPTIONS \u2500\u2500 */
+.opts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+@media (max-width: 480px) { .opts-grid { grid-template-columns: 1fr; } }
+
+.opt-btn {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text);
+  transition: all 0.18s ease;
+  line-height: 1.4;
+}
+.opt-btn:hover:not(:disabled) { border-color: rgba(255,204,0,0.4); background: rgba(255,204,0,0.04); transform: translateX(4px); }
+.opt-lbl {
+  width: 28px; height: 28px; min-width: 28px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+}
+.opt-btn.correct { border-color: var(--correct); background: rgba(0,201,122,0.1); }
+.opt-btn.correct .opt-lbl { background: var(--correct); color: #000; }
+.opt-btn.wrong { border-color: var(--wrong); background: rgba(255,60,95,0.08); }
+.opt-btn.wrong .opt-lbl { background: var(--wrong); color: #fff; }
+.opt-btn.dim { opacity: 0.38; }
+.opt-btn:disabled { cursor: default; }
+
+/* \u2500\u2500 FEEDBACK \u2500\u2500 */
+.feedback {
+  background: var(--surface);
+  border-left: 3px solid var(--correct);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: none;
+  animation: fadeUp 0.28s ease;
+}
+.feedback.show { display: block; }
+.feedback.fail-fb { border-left-color: var(--wrong); }
+.fb-result { font-family: 'Black Han Sans', sans-serif; font-size: 1.05rem; margin-bottom: 6px; }
+.fb-result.ok { color: var(--correct); }
+.fb-result.fail { color: var(--wrong); }
+.fb-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+.fb-next { text-align: right; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* \u2500\u2500 RESULT \u2500\u2500 */
+.result-hero { text-align: center; padding: 48px 0 36px; }
+.r-emoji { font-size: 3.8rem; margin-bottom: 14px; }
+.r-grade {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+.r-score-line { font-size: 1rem; color: var(--muted); }
+.r-score-line span { font-family: 'Black Han Sans', sans-serif; font-size: 1.8rem; color: var(--text); }
+
+.movie-results { display: grid; gap: 10px; margin: 28px 0; }
+.mr-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mr-left { display: flex; align-items: center; gap: 10px; }
+.mr-em { font-size: 1.3rem; }
+.mr-ttl { font-family: 'Black Han Sans', sans-serif; font-size: 0.95rem; }
+.mr-right { display: flex; align-items: center; gap: 10px; }
+.mr-bar-wrap { width: 90px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.mr-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.mr-bar.hi { background: var(--correct); }
+.mr-bar.md { background: var(--accent2); }
+.mr-bar.lo { background: var(--wrong); }
+.mr-num { font-family: 'Black Han Sans', sans-serif; font-size: 0.88rem; min-width: 38px; text-align: right; }
+
+.result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- \u2550\u2550 SCREEN 1: \uc601\ud654 \uc120\ud0dd \u2550\u2550 -->
+  <div id="screen-select" class="screen active">
+    <div class="header">
+      <div class="strip">\ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac</div>
+      <h1>\ud55c\uad6d\uc601\ud654 \ud034\uc988</h1>
+      <p>Movie Quiz Night \u00b7 \uce5c\uad6c\ub4e4\uacfc \ud568\uaed8</p>
+    </div>
+    <div class="sec-label">\ud83c\udfa5 \uc601\ud654 \uc120\ud0dd</div>
+    <div class="movie-grid" id="movie-grid"></div>
+    <div class="bottom-bar">
+      <div class="sel-info"><b id="sel-count">0</b>\ud3b8 \uc120\ud0dd \u00b7 \ud3b8\ub2f9 5\ubb38\uc81c</div>
+      <div class="btn-group">
+        <button class="btn btn-ghost" onclick="selectAll()">\uc804\uccb4\uc120\ud0dd</button>
+        <button class="btn btn-ghost" onclick="clearAll()">\ucd08\uae30\ud654</button>
+        <button class="btn btn-primary" id="start-btn" onclick="startQuiz()" disabled>\ud034\uc988 \uc2dc\uc791 \ud83c\udfac</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- \u2550\u2550 SCREEN 2: \ud034\uc988 \u2550\u2550 -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <div class="movie-badge">
+        <span class="badge-emoji" id="q-emoji"></span>
+        <span class="badge-title" id="q-title"></span>
+      </div>
+      <div class="q-meta">
+        <div class="q-prog-text" id="q-prog-text"></div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="score-txt">\uc810\uc218 <span id="q-score">0</span></div>
+      </div>
+    </div>
+
+    <div id="q-cat" class="q-cat"></div>
+    <div id="q-text" class="q-text"></div>
+    <div id="opts-grid" class="opts-grid"></div>
+
+    <div id="feedback" class="feedback">
+      <div id="fb-result" class="fb-result"></div>
+      <div id="fb-desc" class="fb-desc"></div>
+      <div class="fb-next">
+        <button class="btn btn-primary" id="next-btn" onclick="nextQ()">\ub2e4\uc74c \ubb38\uc81c \u2192</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- \u2550\u2550 SCREEN 3: \uacb0\uacfc \u2550\u2550 -->
+  <div id="screen-result" class="screen">
+    <div class="result-hero">
+      <div class="r-emoji" id="r-emoji"></div>
+      <div class="r-grade" id="r-grade"></div>
+      <div class="r-score-line">\ucd1d <span id="r-score"></span>\uc810 / <span id="r-total"></span>\uc810</div>
+    </div>
+    <div class="sec-label">\ud83d\udcca \uc601\ud654\ubcc4 \uacb0\uacfc</div>
+    <div class="movie-results" id="movie-results"></div>
+    <div class="result-btns">
+      <button class="btn btn-ghost" onclick="replaySame()">\uac19\uc740 \uc601\ud654\ub85c \uc7ac\ub3c4\uc804</button>
+      <button class="btn btn-primary" onclick="goSelect()">\uc601\ud654 \ub2e4\uc2dc \uc120\ud0dd \ud83c\udfac</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+//  DATA
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+const MOVIES = [
+  {
+    id:'exhuma', title:'\ud30c\ubb18', year:'2024', emoji:'\u26b0\ufe0f', genre:'\uacf5\ud3ec/\uc624\uceec\ud2b8',
+    questions:[
+      { cat:'c', catLabel:'\ud83d\udc64 \ub4f1\uc7a5\uc778\ubb3c', q:'\ubb34\ub2f9 \ud654\ub9bc\uacfc \ud568\uaed8 \ud65c\ub3d9\ud558\ub294 \uc80a\uc740 \ub0a8\uc131 \ubb34\ub2f9\uc758 \uc774\ub984<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>\ud83c\udfac \ud55c\uad6d\uc601\ud654 \ud034\uc988</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131c;
+  --card: #1c1c2e;
+  --accent: #ff3c5f;
+  --accent2: #ffcc00;
+  --accent3: #00e5ff;
+  --text: #f0f0f8;
+  --muted: #7070a0;
+  --correct: #00c97a;
+  --wrong: #ff3c5f;
+  --border: rgba(255,255,255,0.08);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Sans KR', sans-serif;
+  min-height: 100vh;
+}
+
+/* \u2500\u2500 SCREENS \u2500\u2500 */
+.screen { display: none; }
+.screen.active { display: block; }
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* \u2500\u2500 HEADER \u2500\u2500 */
+.header {
+  text-align: center;
+  padding: 44px 0 36px;
+}
+.header .strip { font-size: 1.8rem; letter-spacing: 6px; margin-bottom: 14px; }
+.header h1 {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 3.6rem);
+  background: linear-gradient(135deg, #ffcc00, #ff3c5f, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.header p { color: var(--muted); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
+
+/* \u2500\u2500 SECTION LABEL \u2500\u2500 */
+.sec-label {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 1rem;
+  color: var(--accent3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* \u2500\u2500 MOVIE GRID \u2500\u2500 */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.movie-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  user-select: none;
+}
+.movie-card:hover { border-color: rgba(255,204,0,0.4); transform: translateY(-2px); }
+.movie-card.selected {
+  border-color: var(--accent2);
+  background: rgba(255,204,0,0.07);
+  box-shadow: 0 0 18px rgba(255,204,0,0.15);
+}
+.movie-card .chk {
+  position: absolute; top: 10px; right: 10px;
+  width: 22px; height: 22px;
+  background: var(--accent2); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: bold; color: #000;
+  opacity: 0; transform: scale(0);
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.movie-card.selected .chk { opacity: 1; transform: scale(1); }
+.movie-card .m-emoji { font-size: 1.8rem; margin-bottom: 8px; }
+.movie-card .m-title {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 0.95rem; color: var(--text); margin-bottom: 3px;
+}
+.movie-card .m-year { font-size: 0.72rem; color: var(--muted); }
+.movie-card .m-genre {
+  display: inline-block; margin-top: 7px;
+  padding: 2px 8px; border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  font-size: 0.68rem; color: var(--muted);
+}
+
+/* \u2500\u2500 BOTTOM BAR \u2500\u2500 */
+.bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 22px;
+  margin-top: 8px;
+}
+.sel-info { color: var(--muted); font-size: 0.9rem; }
+.sel-info b { color: var(--accent2); font-size: 1.15rem; font-family: 'Black Han Sans', sans-serif; }
+.btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* \u2500\u2500 BUTTONS \u2500\u2500 */
+.btn {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 0.95rem;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.btn-primary {
+  background: linear-gradient(135deg, #ff3c5f, #ff6b35);
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(255,60,95,0.3);
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,60,95,0.45); }
+.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-ghost {
+  background: transparent; color: var(--muted);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.3); }
+
+/* \u2500\u2500 QUIZ HEADER \u2500\u2500 */
+.quiz-top {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 0 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+  flex-wrap: wrap; gap: 12px;
+}
+.movie-badge { display: flex; align-items: center; gap: 10px; }
+.badge-emoji { font-size: 1.4rem; }
+.badge-title { font-family: 'Black Han Sans', sans-serif; font-size: 1rem; color: var(--accent2); }
+
+.q-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.q-prog-text { font-size: 0.78rem; color: var(--muted); }
+.prog-bar { width: 150px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.4s ease; }
+.score-txt { font-size: 0.78rem; color: var(--muted); }
+.score-txt span { color: var(--correct); font-family: 'Black Han Sans', sans-serif; font-size: 1rem; }
+
+/* \u2500\u2500 QUESTION \u2500\u2500 */
+.q-cat {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.73rem; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.cat-c { background: rgba(255,204,0,0.14); color: var(--accent2); border: 1px solid rgba(255,204,0,0.3); }
+.cat-p { background: rgba(0,229,255,0.1); color: var(--accent3); border: 1px solid rgba(0,229,255,0.25); }
+.cat-q { background: rgba(255,60,95,0.1); color: var(--accent); border: 1px solid rgba(255,60,95,0.25); }
+.cat-s { background: rgba(160,110,255,0.1); color: #b08bff; border: 1px solid rgba(160,110,255,0.25); }
+
+.q-text {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: clamp(1.2rem, 3.5vw, 1.65rem);
+  line-height: 1.45;
+  margin-bottom: 26px;
+}
+
+/* \u2500\u2500 OPTIONS \u2500\u2500 */
+.opts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+@media (max-width: 480px) { .opts-grid { grid-template-columns: 1fr; } }
+
+.opt-btn {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  text-align: left;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 0.92rem;
+  color: var(--text);
+  transition: all 0.18s ease;
+  line-height: 1.4;
+}
+.opt-btn:hover:not(:disabled) { border-color: rgba(255,204,0,0.4); background: rgba(255,204,0,0.04); transform: translateX(4px); }
+.opt-lbl {
+  width: 28px; height: 28px; min-width: 28px;
+  border-radius: 7px;
+  background: rgba(255,255,255,0.06);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+}
+.opt-btn.correct { border-color: var(--correct); background: rgba(0,201,122,0.1); }
+.opt-btn.correct .opt-lbl { background: var(--correct); color: #000; }
+.opt-btn.wrong { border-color: var(--wrong); background: rgba(255,60,95,0.08); }
+.opt-btn.wrong .opt-lbl { background: var(--wrong); color: #fff; }
+.opt-btn.dim { opacity: 0.38; }
+.opt-btn:disabled { cursor: default; }
+
+/* \u2500\u2500 FEEDBACK \u2500\u2500 */
+.feedback {
+  background: var(--surface);
+  border-left: 3px solid var(--correct);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: none;
+  animation: fadeUp 0.28s ease;
+}
+.feedback.show { display: block; }
+.feedback.fail-fb { border-left-color: var(--wrong); }
+.fb-result { font-family: 'Black Han Sans', sans-serif; font-size: 1.05rem; margin-bottom: 6px; }
+.fb-result.ok { color: var(--correct); }
+.fb-result.fail { color: var(--wrong); }
+.fb-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin-bottom: 14px; }
+.fb-next { text-align: right; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* \u2500\u2500 RESULT \u2500\u2500 */
+.result-hero { text-align: center; padding: 48px 0 36px; }
+.r-emoji { font-size: 3.8rem; margin-bottom: 14px; }
+.r-grade {
+  font-family: 'Black Han Sans', sans-serif;
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+.r-score-line { font-size: 1rem; color: var(--muted); }
+.r-score-line span { font-family: 'Black Han Sans', sans-serif; font-size: 1.8rem; color: var(--text); }
+
+.movie-results { display: grid; gap: 10px; margin: 28px 0; }
+.mr-row {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mr-left { display: flex; align-items: center; gap: 10px; }
+.mr-em { font-size: 1.3rem; }
+.mr-ttl { font-family: 'Black Han Sans', sans-serif; font-size: 0.95rem; }
+.mr-right { display: flex; align-items: center; gap: 10px; }
+.mr-bar-wrap { width: 90px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.mr-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
+.mr-bar.hi { background: var(--correct); }
+.mr-bar.md { background: var(--accent2); }
+.mr-bar.lo { background: var(--wrong); }
+.mr-num { font-family: 'Black Han Sans', sans-serif; font-size: 0.88rem; min-width: 38px; text-align: right; }
+
+.result-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- \u2550\u2550 SCREEN 1: \uc601\ud654 \uc120\ud0dd \u2550\u2550 -->
+  <div id="screen-select" class="screen active">
+    <div class="header">
+      <div class="strip">\ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac \ud83c\udf9e\ufe0f \ud83c\udfac</div>
+      <h1>\ud55c\uad6d\uc601\ud654 \ud034\uc988</h1>
+      <p>Movie Quiz Night \u00b7 \uce5c\uad6c\ub4e4\uacfc \ud568\uaed8</p>
+    </div>
+    <div class="sec-label">\ud83c\udfa5 \uc601\ud654 \uc120\ud0dd</div>
+    <div class="movie-grid" id="movie-grid"></div>
+    <div class="bottom-bar">
+      <div class="sel-info"><b id="sel-count">0</b>\ud3b8 \uc120\ud0dd \u00b7 \ud3b8\ub2f9 5\ubb38\uc81c</div>
+      <div class="btn-group">
+        <button class="btn btn-ghost" onclick="selectAll()">\uc804\uccb4\uc120\ud0dd</button>
+        <button class="btn btn-ghost" onclick="clearAll()">\ucd08\uae30\ud654</button>
+        <button class="btn btn-primary" id="start-btn" onclick="startQuiz()" disabled>\ud034\uc988 \uc2dc\uc791 \ud83c\udfac</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- \u2550\u2550 SCREEN 2: \ud034\uc988 \u2550\u2550 -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-top">
+      <div class="movie-badge">
+        <span class="badge-emoji" id="q-emoji"></span>
+        <span class="badge-title" id="q-title"></span>
+      </div>
+      <div class="q-meta">
+        <div class="q-prog-text" id="q-prog-text"></div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="score-txt">\uc810\uc218 <span id="q-score">0</span></div>
+      </div>
+    </div>
+
+    <div id="q-cat" class="q-cat"></div>
+    <div id="q-text" class="q-text"></div>
+    <div id="opts-grid" class="opts-grid"></div>
+
+    <div id="feedback" class="feedback">
+      <div id="fb-result" class="fb-result"></div>
+      <div id="fb-desc" class="fb-desc"></div>
+      <div class="fb-next">
+        <button class="btn btn-primary" id="next-btn" onclick="nextQ()">\ub2e4\uc74c \ubb38\uc81c \u2192</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- \u2550\u2550 SCREEN 3: \uacb0\uacfc \u2550\u2550 -->
+  <div id="screen-result" class="screen">
+    <div class="result-hero">
+      <div class="r-emoji" id="r-emoji"></div>
+      <div class="r-grade" id="r-grade"></div>
+      <div class="r-score-line">\ucd1d <span id="r-score"></span>\uc810 / <span id="r-total"></span>\uc810</div>
+    </div>
+    <div class="sec-label">\ud83d\udcca \uc601\ud654\ubcc4 \uacb0\uacfc</div>
+    <div class="movie-results" id="movie-results"></div>
+    <div class="result-btns">
+      <button class="btn btn-ghost" onclick="replaySame()">\uac19\uc740 \uc601\ud654\ub85c \uc7ac\ub3c4\uc804</button>
+      <button class="btn btn-primary" onclick="goSelect()">\uc601\ud654 \ub2e4\uc2dc \uc120\ud0dd \ud83c\udfac</button>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+//  DATA
+// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+const MOVIES = [
+  {
+    id:'exhuma', title:'\ud30c\ubb18', year:'2024', emoji:'\u26b0\ufe0f', genre:'\uacf5\ud3ec/\uc624\uceec\ud2b8',
+    questions:[
+      { cat:'c', catLabel:'\ud83d\udc64 \ub4f1\uc7a5\uc778\ubb3c', q:'\ubb34\ub2f9 \ud654\ub9bc\uacfc \ud568\uaed8 \ud65c\ub3d9\ud558\ub294 \uc80a\uc740 \ub0a8\uc131 \ubb34\ub2f9\uc758 \uc774\ub984
